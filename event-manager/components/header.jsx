@@ -12,7 +12,7 @@ const Header = () => {
         <div className="flex gap-4 items-center  ">
         <li className="flex ">
             <Link className="text-white px-4 font-semibold hover:text-blue-800" href="/admin">Event List</Link>
-            <Link  className="text-white px-4 font-semibold hover:text-blue-800" href="/admin/create-event">Create Event</Link>
+            <Link  className="text-white px-4 font-semibold hover:text-blue-800" href="/admin/events/create-event">Create Event</Link>
             <SignedOut>
               <SignInButton className="text-white px-4 font-semibold hover:text-blue-800"/>
             </SignedOut>

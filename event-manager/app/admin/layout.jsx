@@ -1,6 +1,11 @@
-function AdminLayout() {
+import Header from "@/components/header"
+
+function AdminLayout({ children }) {
   return (
-    <div>AdminLayout</div>
+    <div>
+        {/* <Header /> */}
+        {children}
+    </div>
   )
 }
 export default AdminLayout

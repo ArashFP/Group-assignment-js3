@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { useRef } from "react"
 import { addDoc, collection, updateDoc } from "firebase/firestore"
 import { db, storage } from "@/firebase/config"
-import { getDownloadURL, uploadBytes } from "firebase/storage"
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
  
@@ -52,21 +52,22 @@ export const CreateEventForm = () => {
   // submit handler 
   async function onSubmit(values) {
     const file = fileInputRef.current.files[0]
+    console.log(file)
     if(!file) return
     
 
     const docRef = await addDoc(collection(db, "events"), values)
 
     const imageRef = ref(storage, `events/${docRef.id}/${file.name}`)
-
-    uploadBytes(imageRef,file).then(async (snapshot) => {
+    console.log(imageRef)
+    uploadBytes(imageRef, file).then(async (snapshot) => {
       const downloadURL = await getDownloadURL(imageRef)
       console.log(downloadURL)
       await updateDoc(doc(db, "events", docRef.id), {
         imageURL: downloadURL
       })
     })
-
+    console.log(values)
     router.push('/')
   }
 
@@ -82,7 +83,7 @@ export const CreateEventForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField 
               control={form.control}
-              name="name"
+              name="eventName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Event Name </FormLabel>
@@ -98,7 +99,7 @@ export const CreateEventForm = () => {
             />
             <FormField 
               control={form.control}
-              name="price"
+              name="eventPrice"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Price  </FormLabel>
@@ -114,7 +115,7 @@ export const CreateEventForm = () => {
             />
             <FormField 
               control={form.control}
-              name="description"
+              name="eventDescription"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Description </FormLabel>
@@ -130,7 +131,7 @@ export const CreateEventForm = () => {
             />
             <FormField 
               control={form.control}
-              name="location"
+              name="eventLocation"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Location </FormLabel>
@@ -146,12 +147,12 @@ export const CreateEventForm = () => {
             />
             <FormField 
               control={form.control}
-              name="date"
+              name="eventDate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Date </FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} type="datetime-local" />
                   </FormControl>
                   <FormDescription>
                     Date of the event
@@ -162,7 +163,7 @@ export const CreateEventForm = () => {
             />
             <FormField 
               control={form.control}
-              name="quantity"
+              name="eventQuantity"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel> Quantity </FormLabel>

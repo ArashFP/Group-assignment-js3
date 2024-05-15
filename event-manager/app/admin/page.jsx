@@ -1,25 +1,17 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
 import axios from "axios";
-import { Flex, Spin } from "antd";
-import {
-  CalendarOutlined,
-  DollarOutlined,
-  EnvironmentOutlined,
-} from "@ant-design/icons";
+
 
 function AdminPage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
   const fetchEvents = async () => {
-    //TODO:
     try {
       setLoading(true);
       const response = await axios.get("/api/events");
-      
 
       const eventData = response.data.map((event) => {
         return {
@@ -33,9 +25,9 @@ function AdminPage() {
       console.log("Error", err);
       setLoading(false);
       alert("Something goes wrong!!");
-
     }
   };
+
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -43,11 +35,6 @@ function AdminPage() {
   return (
     <div className="container mx-auto px-4">
       <h2 className="text-6xl font-bold text-center py-14">Event List</h2>
-      {isLoading && (
-        <div className="text-center">
-          <Spin size="large" className="text-center" />
-        </div>
-      )}
       <div className="flex flex-col space-y-8">
         {events.map((event) => (
           <Link
@@ -57,15 +44,13 @@ function AdminPage() {
           >
             <h1 className="font-bold text-2xl">{event.eventName}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <CalendarOutlined /> <span>{event.eventDate}</span>
+              <span>{event.eventDate}</span>
             </p>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <DollarOutlined />
               <span>{event.eventPrice}</span>
             </p>
 
             <p className="text-sm text-muted-foreground flex items-center gap-2">
-              <EnvironmentOutlined />
               {event.eventLocation}
             </p>
           </Link>
@@ -74,4 +59,5 @@ function AdminPage() {
     </div>
   );
 }
+
 export default AdminPage;

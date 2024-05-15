@@ -3,9 +3,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ClerkProvider, SignIn } from "@clerk/nextjs";
-import Header from "@/components/header";
 import AuthContextProvider from "@/components/auth-provider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +16,6 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
           <AuthContextProvider>
@@ -27,12 +25,12 @@ export default function RootLayout({ children }) {
                         enableSystem
                         disableTransitionOnChange
                       >
-                        <Header />
+                        {/* <Header /> */}
+                        <Toaster />
                         {children}
                   </ThemeProvider>
           </AuthContextProvider>
         </body>
       </html>
-    </ClerkProvider>
   );
 }

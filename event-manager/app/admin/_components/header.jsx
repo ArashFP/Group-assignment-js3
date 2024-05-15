@@ -1,24 +1,23 @@
 'use client'
 
 import Link from "next/link"
-import { ModeToggle } from "./mode-toggle"
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
+import { ModeToggle } from "../../../components/mode-toggle"
+import { Button } from "../../../components/ui/button"
+import { signOut } from "firebase/auth"
+import { auth } from "@/firebase/config"
 
 const Header = () => {
   return (
     <nav>
     <ul className="flex justify-between items-center bg-blue-500 py-8 px-4">
         <Link href="/" className="font-semibold text-white ">Event-Maker</Link>
-        <div className="flex gap-4 items-center  ">
-        <li className="flex ">
+        <div className="flex gap-4 items-center">
+        <li className="flex justify-center items-center">
             <Link className="text-white px-4 font-semibold hover:text-blue-800" href="/admin">Event List</Link>
             <Link  className="text-white px-4 font-semibold hover:text-blue-800" href="/admin/events/create-event">Create Event</Link>
-            <SignedOut>
-              <SignInButton className="text-white px-4 font-semibold hover:text-blue-800"/>
-            </SignedOut>
-            <SignedIn>
-              <UserButton afterSignOutUrl="/"/>
-            </SignedIn>
+            <Button variant="outlineWhite" className="bg-transparent border-white text-white font-semibold hover:text-white hover:bg-blue-800 rounded-full" onClick={async () => {
+              await signOut(auth)
+            }} >Sign out</Button>
         </li>
             <ModeToggle className="" />
         </div>

@@ -34,14 +34,15 @@ function AdminPage() {
 
   return (
     <div className="container mx-auto px-4">
-      <h2 className="text-6xl font-bold text-center py-14">Event List</h2>
-      <div className="flex flex-col space-y-8">
-        {events.map((event) => (
+      <h2 className="text-6xl font-bold text-center font-mono py-14">Event List</h2>
+      <div className="grid grid-cols-3 gap-10">
+        {events.map((event) => ( 
           <Link
             key={event.id}
             href={`/admin/events/${event.id}`}
             className="p-6 rounded-lg border-2 shadow-lg cursor-pointer pb flex flex-col gap-4"
           >
+            <img src={event.imageURL} alt={event.eventName} className="object-cover max-h-52 max-w-60 rounded" /> 
             <h1 className="font-bold text-2xl">{event.eventName}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
               <span>{event.eventDate}</span>

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useRef } from "react"
-import { addDoc, collection, updateDoc } from "firebase/firestore"
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore"
 import { db, storage } from "@/firebase/config"
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import { Label } from "@/components/ui/label"
@@ -68,7 +68,7 @@ export const CreateEventForm = () => {
       })
     })
     console.log(values)
-    router.push('/')
+    router.push('/admin')
   }
 
 

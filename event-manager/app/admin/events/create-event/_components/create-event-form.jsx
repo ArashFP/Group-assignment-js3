@@ -75,12 +75,12 @@ export const CreateEventForm = () => {
 
   return (
     <>
-      <div className="mb-8">
+      <div className="mb-7 m-7 p-10">
         <Label> Upload event image</Label>
-        <Input type="file" ref={fileInputRef} accept="image/" />
+        <Input type="file" className="w-60" ref={fileInputRef} accept="image/" />
       </div>
-        <Form  {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 m-7 p-10">
             <FormField 
               control={form.control}
               name="eventName"

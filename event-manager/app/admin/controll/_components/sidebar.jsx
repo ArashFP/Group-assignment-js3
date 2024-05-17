@@ -16,19 +16,19 @@ export const Sidebar = () => {
       <Link href="/admin/controll/upgrade-users" className={cn("flex items-center justify-between p-2 hover:bg-slate-50/10 border-r-4 border-transparent",
             pathname.startsWith("/admin/controll/upgrade-users") && "bg-slate-50/5 border-slate-500"
         )}>
-            <p>Upgrade Users</p>
+            <p className="font-mono">Upgrade Users</p>
             <UserPlus className="size-5"/>
         </Link>
         <Link href="/admin/controll/events/create-event" className={cn("flex items-center justify-between p-2 hover:bg-slate-50/10 border-r-4 border-transparent",
             pathname.startsWith("/admin/controll/events/create-event") && "bg-slate-50/5 border-slate-500"
         )}>
-            <p>Create Event</p>
+            <p className="font-mono">Create Event</p>
             <CalendarPlus2 className="size-5"/>
         </Link>
         <Link href="/admin/controll/change-landingpage" className={cn("flex items-center justify-between p-2 hover:bg-slate-50/10 border-r-4 border-transparent",
             pathname.startsWith("/admin/controll/change-landingpage") && "bg-slate-50/5 border-slate-500"
         )}>
-            <p>Change Landingpage</p>
+            <p className="font-mono">Change Landingpage</p>
             <SquarePen className="size-5"/>
         </Link>
         

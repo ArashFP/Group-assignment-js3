@@ -79,7 +79,7 @@ function AdminPage() {
               
             <button
               onClick={ () => deleteEvent(event.id)}
-              className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded "
             >
               Delete Event
             </button>

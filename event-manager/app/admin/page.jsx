@@ -15,7 +15,7 @@ function AdminPage() {
       console.log(`Event with id ${id} deleted successfully`);
       fetchEvents();
     } catch (error) {
-      console.error('Error deleting event: ', error);
+      console.error("Error deleting event: ", error);
     }
   };
 
@@ -40,7 +40,6 @@ function AdminPage() {
     }
   };
 
-
   useEffect(() => {
     fetchEvents();
   }, []);
@@ -52,8 +51,7 @@ function AdminPage() {
       </h2>
       <div className="grid grid-cols-3 gap-10">
         {events.map((event) => (
-            <div key={event.id}>
-
+          <div key={event.id}>
             <Link
               key={event.id}
               href={`/admin/events/${event.id}`}
@@ -76,13 +74,16 @@ function AdminPage() {
                 {event.eventLocation}
               </p>
             </Link>
-              
-            <button
-              onClick={ () => deleteEvent(event.id)}
-              className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded "
-            >
-              Delete Event
-            </button>
+
+            <div className="flex justify-center items-center p-4px mt-4 mb-4">
+              <button
+                onClick={() => deleteEvent(event.id)}
+                className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Delete Event
+              </button>
+            </div>
+
           </div>
         ))}
       </div>

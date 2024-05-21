@@ -1,29 +1,22 @@
-// function ControllAdminPage() {
-//     return (
-//       <div>
-//       </div>
-//     )
-//   }
-//   export default ControllAdminPage
-
-
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { db } from "@/firebase/config";
 import { doc, deleteDoc } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 function ControllAdminPage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-  const deleteEvent = async (id) => {
+  const deleteEvent = async (id, name) => {
     try {
       await deleteDoc(doc(db, "events", id));
-      console.log(`Event with id ${id} deleted successfully`);
+      toast.success(`Event "${name}" deleted successfully`);
       fetchEvents();
     } catch (error) {
+      toast.error(`Error deleting event "${name}": ${error.message}`);
       console.error("Error deleting event: ", error);
     }
   };
@@ -45,7 +38,7 @@ function ControllAdminPage() {
     } catch (err) {
       console.log("Error", err);
       setLoading(false);
-      alert("Something goes wrong!!");
+      toast.error("Something went wrong!!");
     }
   };
 
@@ -84,17 +77,19 @@ function ControllAdminPage() {
               <p className="text-sm text-muted-foreground flex items-center gap-2">
                 {event.eventLocation}
               </p>
+              <div className="flex justify-center items-center p-4px mt-4 mb-4">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    deleteEvent(event.id, event.eventName);
+                  }}
+                  className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Delete Event
+                </button>
+              </div>
             </Link>
-
-            <div className="flex justify-center items-center p-4px mt-4 mb-4">
-              <button
-                onClick={() => deleteEvent(event.id)}
-                className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Delete Event
-              </button>
-            </div>
-
           </div>
         ))}
       </div>

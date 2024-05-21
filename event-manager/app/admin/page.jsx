@@ -75,14 +75,14 @@ function AdminPage() {
               </p>
             </Link>
 
-            <div className="flex justify-center items-center p-4px mt-4 mb-4">
+            {/* <div className="flex justify-center items-center p-4px mt-4 mb-4">
               <button
                 onClick={() => deleteEvent(event.id)}
                 className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
               >
                 Delete Event
               </button>
-            </div>
+            </div> */}
 
           </div>
         ))}

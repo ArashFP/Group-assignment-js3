@@ -54,7 +54,7 @@ function AdminPage() {
           <div key={event.id}>
             <Link
               key={event.id}
-              href={`/admin/events/${event.id}`}
+              href={`/admin/controll/events/${event.id}`}
               className="p-6 rounded-lg border-2 shadow-lg cursor-pointer pb flex flex-col gap-4"
             >
               <img

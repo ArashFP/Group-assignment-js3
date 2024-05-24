@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { collection, addDoc } from "firebase/firestore"
 import {  auth, db } from '@/firebase/config';
+import toast from 'react-hot-toast';
+
 
 const formSchema = z.object({
   email: z.string().email({ message: "You need to enter a valid email."}),
@@ -61,8 +63,10 @@ const SignUpForm = () => {
           });
 
           console.log("User added to Firestore with ID: ", user.uid);
+          toast.success('Registreringen lyckades!');
         } catch (error) {
           console.error("Error creating user: ", error);
+          toast.error('Något gick fel vid registreringen.');
         }
       }
 

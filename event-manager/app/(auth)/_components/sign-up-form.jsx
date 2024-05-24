@@ -1,128 +1,89 @@
 "use client"
- 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
- 
-import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useAuth } from "@/components/auth-provider"
- 
-const formSchema = z.object({
-  email: z.string().email({ message: "You need to enter a valid email."}),
-  firstName: z.string().min(1, { message: "You need to enter a first name."}),
-  lastName: z.string().min(1, { message: "You need to enter a last name."}),
-  password: z.string().min(6, { message: "The password must be atleast 8 characters long."}),
-  confirmPassword: z.string(),
-}).refine(values => {
-    return values.password === values.confirmPassword
-}, {
-    message: 'Passwords must match',
-    path: ['confirmPassword']
-})
 
+import { useState } from 'react';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { app } from '@/firebase/config'; // Import your Firebase configuration
 
+const SignupForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-const SignUpForm = () => {
-
-    const { register } = useAuth()
-
-    const form = useForm({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            email: "",
-            firstName: "",
-            lastName: "",
-            password: "",
-            confirmPassword: "",
-        },
-      })
-     
-      // 2. Define a submit handler.
-      function onSubmit(values) {
-        console.log(values)
-        register(values)
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log('User signed up:', userCredential.user);
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        email,
+        firstName,
+        lastName,
+        role: 'user', // Default role
+      });
+      // You might want to handle navigation or other state updates here
+    } catch (error) {
+      console.error('Error signing up:', error);
+      setError(error.message);
+    }
+  };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4 border rounded-md">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-                <FormControl>
-                    <Input {...field} />
-                </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First Name</FormLabel>
-                <FormControl>
-                    <Input {...field} />
-                </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                    <Input {...field} />
-                </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-                <FormControl>
-                    <Input type="password" {...field} />
-                </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                    <Input type="password" {...field} />
-                </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
-  )
-}
-export default SignUpForm
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+
+      <input type="text" 
+      placeholder='First Name'
+      value={firstName}
+      onChange={(e) => setFirstName(e.target.value)}
+      required
+      className="p-2 border border-gray-300 rounded"
+      />
+
+      <input type="text"
+      placeholder='Last Name'
+      value={lastName}
+      onChange={(e) => setLastName(e.target.value)}
+      required
+      className="p-2 border border-gray-300 rounded"
+      />
+
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        className="p-2 border border-gray-300 rounded"
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        className="p-2 border border-gray-300 rounded"
+      />
+
+      <input type="password" 
+      placeholder='Confirm Password'
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      required
+      className="p-2 border border-gray-300 rounded"
+      />
+
+      <button type="submit" className="p-2 bg-blue-500 text-white rounded">Sign Up</button>
+      {error && <p className="text-red-500">{error}</p>}
+    </form>
+  );
+};
+
+export default SignupForm;

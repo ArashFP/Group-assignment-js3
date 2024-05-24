@@ -1,95 +1,143 @@
-"use client";
+"use client"
 
-import { useState } from 'react';
-import {  createUserWithEmailAndPassword } from 'firebase/auth';
-import {  doc, setDoc } from 'firebase/firestore';
-import { toast } from 'react-hot-toast';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { collection, addDoc } from "firebase/firestore"
 import {  auth, db } from '@/firebase/config';
 
-const SignupForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+const formSchema = z.object({
+  email: z.string().email({ message: "You need to enter a valid email."}),
+  firstName: z.string().min(1, { message: "You need to enter a first name."}),
+  lastName: z.string().min(1, { message: "You need to enter a last name."}),
+  password: z.string().min(8, { message: "The password must be at least 8 characters long."}),
+  confirmPassword: z.string(),
+}).refine(values => {
+    return values.password === values.confirmPassword
+}, {
+    message: 'Passwords must match',
+    path: ['confirmPassword']
+})
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const SignUpForm = () => {
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
-    }
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            firstName: "",
+            lastName: "",
+            password: "",
+            confirmPassword: "",
+        },
+      })
+     
+      // 2. Define a submit handler.
+      async function onSubmit(values) {
+        try {
+          // Skapa användare med Firebase Authentication
+          const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+          const user = userCredential.user;
+          console.log("User created: ", user);
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, 'users', userCredential.user.uid), {
-        email,
-        firstName,
-        lastName,
-        role: 'user', // Default role
-      });
-      // You might want to handle navigation or other state updates here
-      toast.success("Signed up successfully!");
-    } catch (error) {
-      console.error('Error signing up:', error);
-      toast.error(error.message);
-    }
-  };
+          // Lägga till användardata i Firestore med rollen 'user'
+          await addDoc(collection(db, "users"), {
+            uid: user.uid,
+            email: values.email,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            role: "user" // Tilldela standardrollen 'user'
+          });
+
+          console.log("User added to Firestore with ID: ", user.uid);
+        } catch (error) {
+          console.error("Error creating user: ", error);
+        }
+      }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4 border rounded-md">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+                <FormControl>
+                    <Input {...field} />
+                </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="firstName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+                <FormControl>
+                    <Input {...field} />
+                </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="lastName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                  <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                  <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                  <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  )
+}
 
-      <input 
-        type="text" 
-        placeholder="First Name"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-        required
-        className="p-2 border border-gray-300 rounded"
-      />
-
-      <input 
-        type="text"
-        placeholder="Last Name"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        required
-        className="p-2 border border-gray-300 rounded"
-      />
-
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="p-2 border border-gray-300 rounded"
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        className="p-2 border border-gray-300 rounded"
-      />
-
-      <input 
-        type="password"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-        className="p-2 border border-gray-300 rounded"
-      />
-
-      <button type="submit" className="p-2 bg-blue-500 text-white rounded">
-        Sign Up
-      </button>
-    </form>
-  );
-};
-
-export default SignupForm;
+export default SignUpForm

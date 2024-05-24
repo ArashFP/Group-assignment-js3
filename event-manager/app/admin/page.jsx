@@ -2,22 +2,10 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { db } from "@/firebase/config";
-import { doc, deleteDoc } from "firebase/firestore";
 
 function AdminPage() {
   const [events, setEvents] = useState([]);
   const [isLoading, setLoading] = useState(true);
-
-  const deleteEvent = async (id) => {
-    try {
-      await deleteDoc(doc(db, "events", id));
-      console.log(`Event with id ${id} deleted successfully`);
-      fetchEvents();
-    } catch (error) {
-      console.error("Error deleting event: ", error);
-    }
-  };
 
   const fetchEvents = async () => {
     try {
@@ -54,7 +42,7 @@ function AdminPage() {
           <div key={event.id}>
             <Link
               key={event.id}
-              href={`/admin/controll/events/${event.id}`}
+              href={`/admin/events/${event.id}`}
               className="p-6 rounded-lg border-2 shadow-lg cursor-pointer pb flex flex-col gap-4"
             >
               <img
@@ -74,16 +62,6 @@ function AdminPage() {
                 {event.eventLocation}
               </p>
             </Link>
-
-            {/* <div className="flex justify-center items-center p-4px mt-4 mb-4">
-              <button
-                onClick={() => deleteEvent(event.id)}
-                className=" bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Delete Event
-              </button>
-            </div> */}
-
           </div>
         ))}
       </div>

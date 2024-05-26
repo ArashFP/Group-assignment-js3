@@ -1,14 +1,44 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { db } from "@/firebase/config";
-import { doc, deleteDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase/config";
+import { doc, deleteDoc, collection, getDoc, getDocs } from "firebase/firestore";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+
 
 function ControllAdminPage() {
+  const router = useRouter();
   const [events, setEvents] = useState([]);
   const [isLoading, setLoading] = useState(true);
+
+
+  
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const colRef = collection(db, 'users');
+      const querySnapshot = await getDocs(colRef);
+      const users = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
+  
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const currentUserData = users.find(user => user.uid === currentUser.uid);
+        if (currentUserData && currentUserData.role === 'admin') {
+          console.log('Current user is an admin');
+        } else {
+          console.log('Current user is not an admin');
+          router.push('/')
+        }
+      } else {
+        console.log('No user is signed in.');
+      }
+    };
+  
+    fetchUsers();
+  }, []);
+  
 
   const deleteEvent = async (id, name) => {
     try {

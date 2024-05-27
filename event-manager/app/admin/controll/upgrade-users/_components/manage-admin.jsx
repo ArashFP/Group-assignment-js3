@@ -3,13 +3,17 @@
 
 import { Button } from "@/components/ui/button"
 import { db } from "@/firebase/config"  
-import { collection, getDocs } from "firebase/firestore"
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
+import { AdminListItem } from "./admin-list-item"
+import { UserListItem } from "./user-list-item"
+// import { addDocument } from "@/lib/getDocument"
 
 export const ManageAdmins = () => {
 
   const [admins, setAdmins] = useState([]);
   const [users, setUsers] = useState([])
+  const [selected, setSelected] = useState([])
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -29,6 +33,28 @@ export const ManageAdmins = () => {
     fetchUsers();
   }, []);
   
+  const handleMakeAdmin = async () => {
+    await Promise.all(selected.map(userId => {
+      const userDocRef = doc(db, 'users', userId);
+      return updateDoc(userDocRef, { role: 'admin' });
+    }));
+    // Refresh the users and admins list after updating roles
+    const updatedUsers = users.map(user => selected.includes(user.id) ? { ...user, role: 'admin' } : user);
+    const updatedAdmins = [...admins, ...selected.map(userId => users.find(user => user.id === userId))];
+    setUsers(updatedUsers.filter(user => user.role !== 'admin'));
+    setAdmins(updatedAdmins);
+    setSelected([]); // Clear selection after updating
+  }
+
+  const handleSelect = (user) => {
+    if (selected.includes(user.id)) {
+      setSelected(selected.filter(userId => userId !== user.id));
+    } else {
+      setSelected([...selected, user.id]);
+    }
+  }
+
+
   
 
   return (
@@ -39,8 +65,9 @@ export const ManageAdmins = () => {
           <div className="border rounded-xl min-h-96">
           {
               admins && admins.map(admin => (
-                <div key={admin.id}> {admin.firstName} {admin.lastName} {admin.email} </div>
+                <AdminListItem key={admin.id} onClick={() => {}} imageUrl={admin.imageUrl} email={admin.email}/>
               ))
+              
             }
           </div>
         </div>
@@ -49,14 +76,14 @@ export const ManageAdmins = () => {
           <div className="border rounded-xl min-h-96">
           {
               users && users.map(user => (
-                <div key={user.id}> {user.firstName} {user.lastName} {user.email} </div>
+                <UserListItem key={user.id} onClick={() => handleSelect(user)} imageUrl={user.imageUrl} email={user.email} isSelected={selected.includes(user)}/>
               ))
             }
           </div>
         </div>
       </div>
       <div className="flex justify-end mt-4">
-        <Button> Select admin </Button>
+        <Button disabled={selected.length === 0} onClick={handleMakeAdmin}> Select admin </Button>
 
       </div>
     </>

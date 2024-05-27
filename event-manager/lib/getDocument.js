@@ -1,5 +1,5 @@
 import { db } from "@/firebase/config";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
 
 export default async function getDocument(collectionName, docId) {
@@ -22,4 +22,10 @@ export const addDocument = async (collectionName, data, id = null) => {
 
   await setDoc(docRef, data)
   return docRef
+}
+
+export const removeDocument = async (collectionName, docId) => {
+  const docRef = doc(db, collectionName, docId)
+
+  await deleteDoc(docRef)
 }

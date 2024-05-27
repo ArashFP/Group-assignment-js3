@@ -10,7 +10,7 @@ export const UserListItem = ({email, imageUrl, onClick, isSelected}) => {
     )}>
       <div className="flex items-center gap-4">
         <Avatar className="size-8">
-          <AvatarImage src={imageUrl} />
+          <AvatarImage src="https://github.com/shadcn.png"/>
         </Avatar>
         <p>{email}</p>  
       </div>

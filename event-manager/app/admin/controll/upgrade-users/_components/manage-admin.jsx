@@ -7,13 +7,22 @@ import { collection, doc, getDocs, updateDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import { AdminListItem } from "./admin-list-item"
 import { UserListItem } from "./user-list-item" 
+import { useAuth } from "@/components/auth-provider"
+
+
+
 
 
 export const ManageAdmins = () => {
 
+  const { userId } = useAuth()
+
   const [admins, setAdmins] = useState([]);
   const [users, setUsers] = useState([])
   const [selected, setSelected] = useState([])
+  const [error, setError] = useState(null)
+  
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -54,22 +63,35 @@ export const ManageAdmins = () => {
     }
   }
 
+  const handleRemoveAdmin = async (userId) => {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, { role: 'user' });
+    // Remove the admin from the list of admins
+    setAdmins(admins.filter(admin => admin.id !== userId));
+  }
+
+
 
   
-
   return (
     <>
+    { error && (
+      <div  className="flex justify-center mg-10"> 
+        <p className="text-red-500 px-10 bg-black-500/5 py-5 roundend-lg">{error}</p>
+      </div>
+    )
+    }
       <div className="flex gap-4">
         <div className="flex-1">
           <p className="mg-2 semibold text-lg"> Admins </p>
           <div className="border rounded-xl min-h-96">
-          {
+            {
               admins && admins.map(admin => (
-                <AdminListItem key={admin.id} onClick={() => {}} imageUrl={admin.imageUrl} email={admin.email}/>
+                <AdminListItem key={admin.id} onClick={() => handleRemoveAdmin(admin.id)} imageUrl={admin.imageUrl} email={admin.email}/>
               ))
-              
             }
           </div>
+              
         </div>
         <div className="flex-1">
           <p className="mg-2 semibold text-lg"> Users </p>

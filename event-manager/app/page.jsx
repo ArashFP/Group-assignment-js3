@@ -17,20 +17,22 @@ function LandingPage() {
         console.log("Fetching document...");
         const docRef = doc(db, 'landingPageContent', 'SmtSJZhsEtgOrXbR2FDS');
         const docSnap = await getDoc(docRef);
-        console.log("Document fetched:", docSnap.exists());
         if (docSnap.exists()) {
-          setContent(docSnap.data());
-          console.log("Document data:", docSnap.data());
+          const data = docSnap.data();
+          console.log("Document data:", data);
+          setContent(data);
         } else {
+          console.error("Document does not exist");
           setError('Document does not exist');
         }
       } catch (error) {
-        setError('Failed to fetch content');
         console.error("Error fetching document:", error);
+        setError('Failed to fetch content');
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchContent();
   }, []);
 

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { db } from "@/firebase/config"  
 import { collection, getDocs } from "firebase/firestore"
 import { useEffect, useState } from "react"
+import { AdminListItem } from "./admin-list-item"
 
 export const ManageAdmins = () => {
 
@@ -39,8 +40,9 @@ export const ManageAdmins = () => {
           <div className="border rounded-xl min-h-96">
           {
               admins && admins.map(admin => (
-                <div key={admin.id}> {admin.firstName} {admin.lastName} {admin.email} </div>
+                <AdminListItem key={admin.id} onClick={() => {}} imageUrl={admin.imageUrl} email={admin.email}/>
               ))
+              
             }
           </div>
         </div>

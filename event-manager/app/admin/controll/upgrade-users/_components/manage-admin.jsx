@@ -6,11 +6,8 @@ import { db } from "@/firebase/config"
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore"
 import { useEffect, useState } from "react"
 import { AdminListItem } from "./admin-list-item"
-<<<<<<< HEAD
-=======
-import { UserListItem } from "./user-list-item"
-// import { addDocument } from "@/lib/getDocument"
->>>>>>> janinesBranch
+import { UserListItem } from "./user-list-item" 
+
 
 export const ManageAdmins = () => {
 

@@ -10,7 +10,7 @@ export default async function getDocument(collectionName, docId) {
   }
 
   return { id: docSnap.id, ...docSnap.data() }
-}
+} 
 
 export const addDocument = async (collectionName, data, id = null) => {
   let docRef

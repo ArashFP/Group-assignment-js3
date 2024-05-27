@@ -1,5 +1,5 @@
 import { db } from "@/firebase/config";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 
 
 export default async function getDocument(collectionName, docId) {
@@ -10,4 +10,16 @@ export default async function getDocument(collectionName, docId) {
   }
 
   return { id: docSnap.id, ...docSnap.data() }
+}
+
+export const addDocument = async (collectionName, data, id = null) => {
+  let docRef
+
+  if(id) 
+    docRef = doc(db, collectionName, id)
+  else 
+    docRef = doc(db, collectionName)
+
+  await setDoc(docRef, data)
+  return docRef
 }

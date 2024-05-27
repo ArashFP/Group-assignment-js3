@@ -91,21 +91,20 @@ function ControllAdminPage() {
               href={`/admin/controll/events/${event.id}`}
               className="p-6 rounded-lg border-2 shadow-lg cursor-pointer pb flex flex-col gap-4"
             >
-              <img
+              <h1 className=" text-center uppercase font-bold text-2xl">{event.eventName}</h1>
+              <img className="object-cover max-h-40 max-w-60 rounded mx-auto"
                 src={event.imageURL}
                 alt={event.eventName}
-                className="object-cover max-h-52 max-w-60 rounded"
               />
-              <h1 className="font-bold text-2xl">{event.eventName}</h1>
               <p className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>{event.eventDate}</span>
+                <span className="font-semibold">Date:</span> {event.eventDate}
               </p>
               <p className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>{event.eventPrice}</span>
+                <span className="font-semibold">Price:</span>{event.eventPrice}
               </p>
 
               <p className="text-sm text-muted-foreground flex items-center gap-2">
-                {event.eventLocation}
+                <span className="font-semibold">Location:</span>{event.eventLocation}
               </p>
               <div className="flex justify-center items-center p-4px mt-4 mb-4">
                 <button

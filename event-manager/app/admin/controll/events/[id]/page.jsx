@@ -1,11 +1,21 @@
-import { Button } from "@/components/ui/button"
-import getDocument from "@/lib/getDocument"
-import Link from "next/link"
+'use client'
 
+import { useEffect, useState } from 'react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { db } from '@/firebase/config';
 
-export default async function DetailEventPage({ params }) {
+export default function DetailEventPage({ params }) {
+  const [event, setEvent] = useState(null);
 
-  const event = await getDocument('events', params.id)
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'events', params.id), (doc) => {
+      setEvent(doc.data());
+    });
+
+    return () => unsubscribe();
+  }, [params.id]);
 
 
   return (

@@ -13,6 +13,12 @@ export const Sidebar = () => {
   return (
     <div className="bg-slate-500 border-r flex flex-col h-full">
       <div className="flex-1">
+      <Link href="/admin/controll/" className={cn("flex items-center justify-between p-2 hover:bg-slate-50/10 border-r-4 border-transparent",
+            pathname.startsWith("/admin/controll/") && "bg-slate-50/5 border-slate-500"
+        )}>
+            <p className="font-mono">Events</p>
+            <SquarePen className="size-5"/>
+        </Link>         
       <Link href="/admin/controll/upgrade-users" className={cn("flex items-center justify-between p-2 hover:bg-slate-50/10 border-r-4 border-transparent",
             pathname.startsWith("/admin/controll/upgrade-users") && "bg-slate-50/5 border-slate-500"
         )}>

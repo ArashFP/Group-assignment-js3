@@ -48,20 +48,28 @@ const AuthContextProvider = ({ children }) => {
     const login = async (values) => {
         const toastId = toast.loading('Signing in...')
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password)
-
-            if(!userCredential.user) {
-                throw new Error('Something went wrong, please try again later.')
-            }
-
-            toast.success('Signed in!', { id: toastId })
-            
+          const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password)
+      
+          if(!userCredential.user) {
+            throw new Error('Something went wrong, please try again later.')
+          }
+      
+          // Fetch user data from your database
+          const userData = await fetchUserData(userCredential.user.uid);
+      
+          // Check if user is an admin
+          if (userData.role === "admin") {
+            throw new Error('Admins cannot log in from this page.')
+          }
+      
+          toast.success('Signed in!', { id: toastId })
+          
         } catch (err) {
-            console.log(err.message);
-            const message = err.code.split('/')[1].replace(/-/g, ' ')
-            toast.error(message || err.message, { id: toastId })
+          console.log(err.message);
+          const message = err.code.split('/')[1].replace(/-/g, ' ')
+          toast.error(message || err.message, { id: toastId })
         }
-    }
+      }
 
 
     const value = {

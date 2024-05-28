@@ -54,9 +54,9 @@ export const CreateEventForm = () => {
       toast.error("Please upload an event image.");
       return;
     }
-
-    try {
-      const docRef = await addDoc(collection(db, "events"), values);
+    console.log(values,"values")
+      try {
+      const docRef = await addDoc(collection(db, "events"), {...values,availableTickets:values.eventQuantity});
       const imageRef = ref(storage, `events/${docRef.id}/${file.name}`);
       await uploadBytes(imageRef, file);
       const downloadURL = await getDownloadURL(imageRef);

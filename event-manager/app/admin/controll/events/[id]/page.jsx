@@ -62,11 +62,18 @@ export default function DetailEventPage({ params }) {
     fetchBookedUsersEmails();
   }, [event, users]);
 
+  const renderEventDate = (eventDate) => {
+    if (eventDate && eventDate.seconds) {
+      return new Date(eventDate.seconds * 1000).toLocaleDateString('en-GB');
+    }
+    return new Date(eventDate).toLocaleDateString('en-GB');
+  };
+
   return (
     <div className="flex flex-col h-screen justify-center items-center">
       <div className="bg-slate-800 px-5 py-5 rounded-2xl w-1/3 flex flex-col">
         <h1 className="text-4xl text-center mb-8 ">{event?.eventName}</h1>
-        <p className="mb-1">Date: {event?.eventDate?.toDate().toLocaleDateString('en-GB')}</p>
+        <p className="mb-1">Date: {event?.eventDate ? renderEventDate(event.eventDate) : 'Invalid Date'}</p>
         <p className="mb-1">Description: {event?.eventDescription}</p>
         <p className="mb-1">Location: {event?.eventLocation}</p>
         <p className="mb-1">Price: {event?.eventPrice}</p>
@@ -93,5 +100,7 @@ export default function DetailEventPage({ params }) {
         </Link>
       </div>
     </div>
-  )
+  );
 }
+
+

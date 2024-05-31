@@ -7,21 +7,17 @@ import { doc, deleteDoc, collection, getDoc, getDocs } from "firebase/firestore"
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-
 function ControllAdminPage() {
   const router = useRouter();
   const [events, setEvents] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-
-  
-  
   useEffect(() => {
     const fetchUsers = async () => {
       const colRef = collection(db, 'users');
       const querySnapshot = await getDocs(colRef);
       const users = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id}));
-  
+
       const currentUser = auth.currentUser;
       if (currentUser) {
         const currentUserData = users.find(user => user.uid === currentUser.uid);
@@ -35,10 +31,9 @@ function ControllAdminPage() {
         console.log('No user is signed in.');
       }
     };
-  
+
     fetchUsers();
   }, []);
-  
 
   const deleteEvent = async (id, name) => {
     try {
@@ -57,9 +52,12 @@ function ControllAdminPage() {
       const response = await axios.get("/api/events");
 
       const eventData = response.data.map((event) => {
+        const eventDate = event.eventDate.seconds
+          ? new Date(event.eventDate.seconds * 1000).toLocaleString()
+          : new Date(event.eventDate).toLocaleString();
         return {
           ...event,
-          eventDate: new Date(event.eventDate?.seconds * 1000).toLocaleString(),
+          eventDate,
         };
       });
       setEvents(eventData);

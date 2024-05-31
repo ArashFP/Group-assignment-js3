@@ -13,13 +13,17 @@ const EditEventForm = ({ event: oldEvent }) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
   const dateString = `${year}-${month}-${day}`;
+  const timeString = `${hours}:${minutes}`;
 
   const [formData, setFormData] = useState({
     eventName: oldEvent.eventName,
     eventDescription: oldEvent.eventDescription,
     eventLocation: oldEvent.eventLocation,
     eventDate: dateString,
+    eventTime: timeString,
     eventPrice: oldEvent.eventPrice,
     eventQuantity: oldEvent.eventQuantity,
     imageURL: oldEvent.imageURL,
@@ -31,11 +35,13 @@ const EditEventForm = ({ event: oldEvent }) => {
     e.preventDefault();
     setFormError(null);
 
-    if (!formData.eventName || !formData.eventDescription || !formData.eventLocation || !formData.eventDate || !formData.eventPrice || !formData.eventQuantity) {
+    if (!formData.eventName || !formData.eventDescription || !formData.eventLocation || !formData.eventDate || !formData.eventTime || !formData.eventPrice || !formData.eventQuantity) {
       setFormError('Please fill in all fields');
       setTimeout(() => { setFormError(null); }, 4000);
       return;
     }
+
+    const eventDateTime = new Date(`${formData.eventDate}T${formData.eventTime}`);
 
     try {
       if (oldEvent.imageURL !== selectedImage) {
@@ -48,11 +54,11 @@ const EditEventForm = ({ event: oldEvent }) => {
         reader.onabort = () => setFormError('File reading was aborted');
         reader.onerror = () => setFormError('File reading has failed');
         reader.onload = async () => {
-          await uploadFile(selectedImage);
+          await uploadFile(selectedImage, eventDateTime);
         };
         reader.readAsArrayBuffer(selectedImage);
       } else {
-        await updateDocument('events', oldEvent.id, { ...formData, attendees: oldEvent.attendees || [] });
+        await updateDocument('events', oldEvent.id, { ...formData, eventDate: eventDateTime, attendees: oldEvent.attendees || [] });
         router.push('/admin/controll');
       }
     } catch (error) {
@@ -61,7 +67,7 @@ const EditEventForm = ({ event: oldEvent }) => {
     }
   };
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (file, eventDateTime) => {
     try {
       const fileRef = ref(storage, `events/${oldEvent.id}/${file.name}`);
       const result = await uploadBytes(fileRef, file);
@@ -70,6 +76,7 @@ const EditEventForm = ({ event: oldEvent }) => {
       const downloadUrl = await getDownloadURL(fileRef);
       await updateDocument('events', oldEvent.id, {
         ...formData,
+        eventDate: eventDateTime,
         attendees: oldEvent.attendees || [],
         imageURL: downloadUrl,
         imageRef: file.name,
@@ -115,6 +122,12 @@ const EditEventForm = ({ event: oldEvent }) => {
           <label htmlFor="eventDate">
             Date:
             <input id="eventDate" type="date" value={formData.eventDate} onChange={onChange} className="w-full" />
+          </label>
+        </div>
+        <div className="w-full">
+          <label htmlFor="eventTime">
+            Time:
+            <input id="eventTime" type="time" value={formData.eventTime} onChange={onChange} className="w-full" />
           </label>
         </div>
         <div className="w-full">
